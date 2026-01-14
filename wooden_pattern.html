@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>36 Wooden Design Patterns</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: #1a1a1a;
+            padding: 30px 20px;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #d4a574;
+        }
+
+        .header p {
+            color: #aaa;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .wood-card {
+            height: 250px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .wood-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+        }
+
+        .wood-pattern {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wood-grain {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            background-image: 
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.05) 2px,
+                    rgba(0,0,0,0.05) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 20px,
+                    rgba(0,0,0,0.1) 20px,
+                    rgba(0,0,0,0.1) 21px
+                );
+        }
+
+        .wood-knot {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(0,0,0,0.4) 0%, 
+                rgba(0,0,0,0.2) 30%, 
+                rgba(0,0,0,0.1) 60%, 
+                transparent 100%
+            );
+        }
+
+        .knot1 {
+            width: 40px;
+            height: 40px;
+            top: 20%;
+            left: 25%;
+        }
+
+        .knot2 {
+            width: 30px;
+            height: 30px;
+            top: 60%;
+            left: 70%;
+        }
+
+        .wood-texture {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, 
+                    transparent 0%, 
+                    rgba(0,0,0,0.03) 50%, 
+                    transparent 100%
+                );
+            background-size: 30px 100%;
+        }
+
+        .varnish {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                135deg,
+                transparent 0%,
+                rgba(255,255,255,0.1) 50%,
+                transparent 100%
+            );
+            pointer-events: none;
+        }
+
+        .label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        /* Wood color variations */
+        .oak { background: linear-gradient(90deg, #8b6f47 0%, #a0825f 10%, #8b6f47 20%, #76613d 30%, #8b6f47 40%, #9d8159 50%, #8b6f47 60%, #76613d 70%, #8b6f47 80%, #a0825f 90%, #8b6f47 100%); }
+        .walnut { background: linear-gradient(90deg, #4a3728 0%, #5d4839 10%, #4a3728 20%, #3d2f23 30%, #4a3728 40%, #594636 50%, #4a3728 60%, #3d2f23 70%, #4a3728 80%, #5d4839 90%, #4a3728 100%); }
+        .cherry { background: linear-gradient(90deg, #8b4049 0%, #a04d58 10%, #8b4049 20%, #763844 30%, #8b4049 40%, #9d525e 50%, #8b4049 60%, #763844 70%, #8b4049 80%, #a04d58 90%, #8b4049 100%); }
+        .mahogany { background: linear-gradient(90deg, #6b3426 0%, #804036 10%, #6b3426 20%, #5a2a1f 30%, #6b3426 40%, #7a3a2f 50%, #6b3426 60%, #5a2a1f 70%, #6b3426 80%, #804036 90%, #6b3426 100%); }
+        .maple { background: linear-gradient(90deg, #c9a882 0%, #dbb896 10%, #c9a882 20%, #b89671 30%, #c9a882 40%, #d4b28d 50%, #c9a882 60%, #b89671 70%, #c9a882 80%, #dbb896 90%, #c9a882 100%); }
+        .pine { background: linear-gradient(90deg, #d4b896 0%, #e5c9a7 10%, #d4b896 20%, #c3a785 30%, #d4b896 40%, #dfc2a0 50%, #d4b896 60%, #c3a785 70%, #d4b896 80%, #e5c9a7 90%, #d4b896 100%); }
+        .ebony { background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 10%, #1a1a1a 20%, #0d0d0d 30%, #1a1a1a 40%, #262626 50%, #1a1a1a 60%, #0d0d0d 70%, #1a1a1a 80%, #2d2d2d 90%, #1a1a1a 100%); }
+        .teak { background: linear-gradient(90deg, #a0764b 0%, #b5895e 10%, #a0764b 20%, #8b653a 30%, #a0764b 40%, #ad8058 50%, #a0764b 60%, #8b653a 70%, #a0764b 80%, #b5895e 90%, #a0764b 100%); }
+        .ash { background: linear-gradient(90deg, #b8a893 0%, #cdbba6 10%, #b8a893 20%, #a39782 30%, #b8a893 40%, #c5b59f 50%, #b8a893 60%, #a39782 70%, #b8a893 80%, #cdbba6 90%, #b8a893 100%); }
+        .birch { background: linear-gradient(90deg, #e8d7c3 0%, #f5e4d0 10%, #e8d7c3 20%, #d7c6b2 30%, #e8d7c3 40%, #f0ded0 50%, #e8d7c3 60%, #d7c6b2 70%, #e8d7c3 80%, #f5e4d0 90%, #e8d7c3 100%); }
+        .cedar { background: linear-gradient(90deg, #8b5a3c 0%, #a06b4f 10%, #8b5a3c 20%, #764929 30%, #8b5a3c 40%, #9d6548 50%, #8b5a3c 60%, #764929 70%, #8b5a3c 80%, #a06b4f 90%, #8b5a3c 100%); }
+        .rosewood { background: linear-gradient(90deg, #3d1e1e 0%, #522828 10%, #3d1e1e 20%, #2e1414 30%, #3d1e1e 40%, #4a2323 50%, #3d1e1e 60%, #2e1414 70%, #3d1e1e 80%, #522828 90%, #3d1e1e 100%); }
+        .bamboo { background: linear-gradient(90deg, #c4a572 0%, #d9ba87 10%, #c4a572 20%, #af9061 30%, #c4a572 40%, #d1b27f 50%, #c4a572 60%, #af9061 70%, #c4a572 80%, #d9ba87 90%, #c4a572 100%); }
+        .beech { background: linear-gradient(90deg, #c19a6b 0%, #d6af80 10%, #c19a6b 20%, #ac855a 30%, #c19a6b 40%, #cda576 50%, #c19a6b 60%, #ac855a 70%, #c19a6b 80%, #d6af80 90%, #c19a6b 100%); }
+        .redwood { background: linear-gradient(90deg, #a45a52 0%, #b96b63 10%, #a45a52 20%, #8f4941 30%, #a45a52 40%, #b1655d 50%, #a45a52 60%, #8f4941 70%, #a45a52 80%, #b96b63 90%, #a45a52 100%); }
+        .hickory { background: linear-gradient(90deg, #9d8b6a 0%, #b2a07f 10%, #9d8b6a 20%, #887655 30%, #9d8b6a 40%, #aa9377 50%, #9d8b6a 60%, #887655 70%, #9d8b6a 80%, #b2a07f 90%, #9d8b6a 100%); }
+        .acacia { background: linear-gradient(90deg, #8b6341 0%, #a07856 10%, #8b6341 20%, #764e30 30%, #8b6341 40%, #9d7050 50%, #8b6341 60%, #764e30 70%, #8b6341 80%, #a07856 90%, #8b6341 100%); }
+        .cypress { background: linear-gradient(90deg, #b89b75 0%, #cdb08a 10%, #b89b75 20%, #a38664 30%, #b89b75 40%, #c5a880 50%, #b89b75 60%, #a38664 70%, #b89b75 80%, #cdb08a 90%, #b89b75 100%); }
+        .wenge { background: linear-gradient(90deg, #2d2622 0%, #423a35 10%, #2d2622 20%, #1e1815 30%, #2d2622 40%, #3a322d 50%, #2d2622 60%, #1e1815 70%, #2d2622 80%, #423a35 90%, #2d2622 100%); }
+        .olive { background: linear-gradient(90deg, #8a7c5d 0%, #9f9172 10%, #8a7c5d 20%, #756748 30%, #8a7c5d 40%, #978968 50%, #8a7c5d 60%, #756748 70%, #8a7c5d 80%, #9f9172 90%, #8a7c5d 100%); }
+        .alder { background: linear-gradient(90deg, #b8956f 0%, #cdaa84 10%, #b8956f 20%, #a3805e 30%, #b8956f 40%, #c5a27a 50%, #b8956f 60%, #a3805e 70%, #b8956f 80%, #cdaa84 90%, #b8956f 100%); }
+        .spruce { background: linear-gradient(90deg, #d9c9ab 0%, #eedec0 10%, #d9c9ab 20%, #c4b496 30%, #d9c9ab 40%, #e6d6b8 50%, #d9c9ab 60%, #c4b496 70%, #d9c9ab 80%, #eedec0 90%, #d9c9ab 100%); }
+        .poplar { background: linear-gradient(90deg, #c4b59a 0%, #d9caaf 10%, #c4b59a 20%, #afa089 30%, #c4b59a 40%, #d1c2a7 50%, #c4b59a 60%, #afa089 70%, #c4b59a 80%, #d9caaf 90%, #c4b59a 100%); }
+        .chestnut { background: linear-gradient(90deg, #8b6347 0%, #a07856 10%, #8b6347 20%, #764e36 30%, #8b6347 40%, #9d7050 50%, #8b6347 60%, #764e36 70%, #8b6347 80%, #a07856 90%, #8b6347 100%); }
+        .fir { background: linear-gradient(90deg, #c9b593 0%, #decaa8 10%, #c9b593 20%, #b4a082 30%, #c9b593 40%, #d6c2a0 50%, #c9b593 60%, #b4a082 70%, #c9b593 80%, #decaa8 90%, #c9b593 100%); }
+        .hemlock { background: linear-gradient(90deg, #bfa57b 0%, #d4ba90 10%, #bfa57b 20%, #aa906a 30%, #bfa57b 40%, #ccb286 50%, #bfa57b 60%, #aa906a 70%, #bfa57b 80%, #d4ba90 90%, #bfa57b 100%); }
+        .larch { background: linear-gradient(90deg, #a88c64 0%, #bda179 10%, #a88c64 20%, #93774f 30%, #a88c64 40%, #b59970 50%, #a88c64 60%, #93774f 70%, #a88c64 80%, #bda179 90%, #a88c64 100%); }
+        .sycamore { background: linear-gradient(90deg, #d4c2a4 0%, #e9d7b9 10%, #d4c2a4 20%, #bfad8f 30%, #d4c2a4 40%, #e1cfb1 50%, #d4c2a4 60%, #bfad8f 70%, #d4c2a4 80%, #e9d7b9 90%, #d4c2a4 100%); }
+        .willow { background: linear-gradient(90deg, #b8a687 0%, #cdbb9c 10%, #b8a687 20%, #a39176 30%, #b8a687 40%, #c5b392 50%, #b8a687 60%, #a39176 70%, #b8a687 80%, #cdbb9c 90%, #b8a687 100%); }
+        .koa { background: linear-gradient(90deg, #7a5230 0%, #8f6745 10%, #7a5230 20%, #653d1f 30%, #7a5230 40%, #875f3e 50%, #7a5230 60%, #653d1f 70%, #7a5230 80%, #8f6745 90%, #7a5230 100%); }
+        .purpleheart { background: linear-gradient(90deg, #6e3d6e 0%, #834883 10%, #6e3d6e 20%, #593259 30%, #6e3d6e 40%, #7b457b 50%, #6e3d6e 60%, #593259 70%, #6e3d6e 80%, #834883 90%, #6e3d6e 100%); }
+        .padauk { background: linear-gradient(90deg, #a64632 0%, #bb5b47 10%, #a64632 20%, #91311d 30%, #a64632 40%, #b35340 50%, #a64632 60%, #91311d 70%, #a64632 80%, #bb5b47 90%, #a64632 100%); }
+        .zebrawood { background: linear-gradient(90deg, #c4a57a 0%, #d9ba8f 10%, #8b6f47 20%, #c4a57a 30%, #8b6f47 40%, #d1b287 50%, #8b6f47 60%, #c4a57a 70%, #8b6f47 80%, #d9ba8f 90%, #c4a57a 100%); }
+        .bubinga { background: linear-gradient(90deg, #6b3931 0%, #804e46 10%, #6b3931 20%, #56241c 30%, #6b3931 40%, #78463e 50%, #6b3931 60%, #56241c 70%, #6b3931 80%, #804e46 90%, #6b3931 100%); }
+        .sapele { background: linear-gradient(90deg, #8b5238 0%, #a0674d 10%, #8b5238 20%, #763d23 30%, #8b5238 40%, #9d5f46 50%, #8b5238 60%, #763d23 70%, #8b5238 80%, #a0674d 90%, #8b5238 100%); }
+        .iroko { background: linear-gradient(90deg, #9d7a4c 0%, #b28f61 10%, #9d7a4c 20%, #88653b 30%, #9d7a4c 40%, #aa8758 50%, #9d7a4c 60%, #88653b 70%, #9d7a4c 80%, #b28f61 90%, #9d7a4c 100%); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>36 Wooden Design Patterns</h1>
+        <p>Premium Wood Textures Collection</p>
+    </div>
+
+    <div class="grid-container">
+        <div class="wood-card">
+            <div class="wood-pattern oak">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Oak Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern walnut">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Walnut Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern cherry">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Cherry Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern mahogany">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Mahogany Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern maple">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Maple Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern pine">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Pine Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern ebony">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Ebony Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern teak">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Teak Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern ash">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Ash Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern birch">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Birch Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern cedar">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Cedar Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern rosewood">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Rosewood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern bamboo">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Bamboo Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern beech">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Beech Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern redwood">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Redwood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern hickory">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Hickory Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern acacia">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Acacia Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern cypress">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Cypress Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern wenge">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Wenge Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern olive">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Olive Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern alder">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Alder Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern spruce">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Spruce Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern poplar">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Poplar Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern chestnut">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Chestnut Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern fir">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Fir Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern hemlock">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div>
+                <div class="wood-knot knot2"></div>
+                <div class="varnish"></div>
+                <div class="label">Hemlock Wood</div>
+            </div>
+        </div>
+
+        <div class="wood-card">
+            <div class="wood-pattern larch">
+                <div class="wood-grain"></div>
+                <div class="wood-texture"></div>
+                <div class="wood-knot knot1"></div
